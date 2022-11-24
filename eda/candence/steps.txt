@@ -1,0 +1,53 @@
+Username:root
+password:vlsi123
+
+Click on Power -> Connnect
+CLick Settings-> Change Date and time
+
+open terminal
+
+in terminal
+
+type csh
+type source /home/install/cshrc 
+virtuoso &
+File->new ->library->put name
+
+after name->attach to existing tech library
+gpdk180
+file->new->cellview
+provide name->select your own lib
+application->open with schematic Xl
+
+create instance
+->lib->gpdk180
+
+select cell->nmos
+press Q to chnage the instance settings
+ 
+for vdd,ground
+lib->analog library
+
+
+dc voltage->1.8
+zero valie->0
+one value->1v
+
+peroid of waveform-> 5ns
+rise time->180 ps/0.18ns
+fall time-> 180.00ps/0.18ns
+
+
+to launch
+====================
+
+go launch
+ade l
+analyses->10n(moderate)
+output,(second last) (select input nd output line)
+family (sude->split)
+set color diff
+tools->calculator
+  
+
+

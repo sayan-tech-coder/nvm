@@ -1,0 +1,707 @@
+
+VERILOG DESIGN AND TESTING EXAMPLES
+
+
+
+NOTE: Below Verilog Design and Testing Examples are simulated/Verified using iverilog open source Verilog Simulator
+Note: It is always good coding practice (recommended) to give same file name and module name. 
+
+EXAMPLE: 2:1 MUX (COMBINATIONAL GATE) (mux2to1.v)
+
+module mux2to1(a,b,sel,y);
+input a,b,sel;
+output y;
+
+assign y = sel ? a:b;
+
+endmodule
+
+
+EXAMPLE: TEST 2:1 MUX (test_mux2to1.v)
+
+module test_mux2to1;
+reg a,b,sel;
+wire y;
+
+mux2to1 imux2to1(a,b,sel,y);
+
+initial begin
+
+a=0; b=0; sel=0;
+#10 a=1; 
+#10 sel=1;
+#10 b=1; 
+$dumpflush;
+$finish;
+end
+initial begin
+$monitor($time, "a=%b b=%b sel=%b y=%b", a,b,sel,y);
+$dumpfile("test_mux2to1.vcd");
+$dumpvars(0,test_mux2to1);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: HALF ADDER (COMBINATIONAL LOGIC) (half_adder.v)
+
+module half_adder(s,c,a,b);
+input a,b;
+output s,c;
+
+assign #3 s = a^b;
+assign #2 c = a&b;
+
+endmodule
+
+
+
+EXAMPLE: TEST HALF ADDER (test_half_adder.v)
+
+module test_half_adder;
+reg a,b;
+wire s,c;
+
+half_adder ihalf_adder(s,c,a,b);
+
+initial begin
+
+a=0; b=0; 
+#10 b=1; 
+#10 a=1; b=0;
+#10 b=1; 
+#10
+$dumpflush;
+$finish;
+end
+initial begin
+$monitor($time, "a=%b b=%b s=%b c=%b", a,b,s,c);
+$dumpfile("test_half_adder.vcd");
+$dumpvars(0,test_half_adder);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: 3 TO 8 DECODER (COMBINATIONAL LOGIC) (decoder3to8.v)
+
+module decoder3to8(en,sel,y);
+input en; 
+input [2:0]sel;
+output [7:0]y;
+
+reg [7:0]y;
+
+always@(en or sel)
+begin
+if (en)
+#2 y = 8'b00000000;
+else
+case (sel)
+3'b000: #2 y = 8'b00000001; 
+3'b001: #2 y = 8'b00000010; 
+3'b010: #2 y = 8'b00000100; 
+3'b011: #2 y = 8'b00001000; 
+3'b100: #2 y = 8'b00010000; 
+3'b101: #2 y = 8'b00100000; 
+3'b110: #2 y = 8'b01000000; 
+3'b111: #2 y = 8'b10000000; 
+default: #2 y = 8'bx; 
+endcase
+end
+
+endmodule
+
+
+EXAMPLE: TEST 3 TO 8 DECODER (test_decoder3to8.v)
+
+module test_decoder3to8;
+reg en;
+reg [2:0]sel;
+wire [7:0]y;
+
+decoder3to8 idecoder3to8(en,sel,y);
+
+
+initial begin
+en=1;
+#40 en=0;
+#20 sel=3'b000; 
+#20 sel=3'b001;
+#20 sel=3'b010;
+#20 sel=3'b011;
+#20 sel=3'b100;
+#20 sel=3'b101;
+#20 sel=3'b110;
+#20 sel=3'b111;
+#20
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "en=%b sel=%b y=%b", en,sel,y);
+$dumpfile("test_decoder3to8.vcd");
+$dumpvars(0,test_decoder3to8);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: DATA LATCH (SEQUENTIAL GATE) (d_latch.v)
+
+
+module d_latch(d,clk,q);
+input d,clk;
+output q;
+
+reg q;
+
+always@(*)
+begin
+if (clk)
+#3 q <= d;
+end
+
+endmodule
+
+
+
+EXAMPLE: TEST DATA LATCH (test_d_latch.v)
+
+module test_d_latch;
+reg d,clk;
+wire q;
+
+d_latch id_latch(d,clk,q);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+d=0;
+#15 d=1; 
+#10 d=0;
+#10 d=1; 
+#10
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "d=%b clk=%b q=%b", d,clk,q);
+$dumpfile("test_d_latch.vcd");
+$dumpvars(0,test_d_latch);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: DATA FLOP (SEQUENTIAL GATE) (d_flop.v)
+
+module d_flop(d,clk,q);
+input d,clk;
+output q;
+
+reg q;
+
+always@(posedge clk)
+begin
+#3 q <= d;
+end
+
+endmodule
+
+
+
+EXAMPLE: TEST DATA FLOP (test_d_flop.v)
+
+module test_d_flop;
+reg d,clk;
+wire q;
+
+d_flop id_flop(d,clk,q);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+d=0;
+#20 d=1; 
+#20 d=0;
+#20 d=1; 
+#20
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "d=%b clk=%b q=%b", d,clk,q);
+$dumpfile("test_d_flop.vcd");
+$dumpvars(0,test_d_flop);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: ASYNCHRONOUS RESET DATA FLOP (SEQUENTIAL GATE) (d_flop_rst.v)
+
+module d_flop_rst(d,clk,rst,q);
+input d,clk,rst;
+output q;
+
+reg q;
+
+always@(posedge clk or posedge rst)
+begin
+if (rst)
+#2 q <= 0;
+else
+#3 q <= d;
+end
+
+endmodule
+
+
+
+
+EXAMPLE: TEST ASYNCHRONOUS RESET DATA FLOP (test_d_flop_rst.v)
+
+module test_d_flop_rst;
+reg d,clk,rst;
+wire q;
+
+d_flop_rst id_flop_rst(d,clk,rst,q);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+d=0; rst=0;
+#20 d=1; 
+#20 rst=1;
+#20 d=0;
+#20 rst=0;
+#20 d=1; 
+#20
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "d=%b clk=%b rst=%b q=%b", d,clk,rst,q);
+$dumpfile("test_d_flop_rst.vcd");
+$dumpvars(0,test_d_flop_rst);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: COUNTER (SEQUENTIAL LOGIC) (counter.v)
+
+module counter(en,clk,rst,count);
+input en,clk,rst;
+output [7:0]count;
+
+reg [7:0]count;
+
+always@(posedge clk or posedge rst)
+begin
+if (rst)
+#2 count <= 0;
+else
+if (en)
+count <= count + 1;
+end
+
+endmodule
+
+
+
+
+EXAMPLE: TEST COUNTER (test_counter.v)
+
+module test_counter;
+reg en,clk,rst;
+wire [7:0]count;
+
+counter icounter(en,clk,rst,count);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+en=0; rst=1;
+#40 rst=0; 
+#100 en=1;
+#300
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "en=%b clk=%b rst=%b count=%b", en,clk,rst,count);
+$dumpfile("test_counter.vcd");
+$dumpvars(0,test_counter);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: SEQUENCE COUNTER (SEQUENTIAL LOGIC) (seq_counter.v)
+
+module seq_counter(clk,rst,state);
+input clk,rst;
+output [3:0]state;
+
+reg [3:0]state;
+
+always@(posedge clk)
+begin
+if (rst)
+#2 state <= 0;
+else
+case (state)
+4'b0000: #2 state <= 4'b0001; // 0->1
+4'b0001: #2 state <= 4'b0010; // 1->2
+4'b0010: #2 state <= 4'b0100; // 2->4
+4'b0100: #2 state <= 4'b1001; // 4->9
+4'b1001: #2 state <= 4'b1010; // 9->10
+4'b1010: #2 state <= 4'b0101; // 10->5
+4'b0101: #2 state <= 4'b0110; // 5->6
+4'b0110: #2 state <= 4'b1000; // 6->8
+4'b1000: #2 state <= 4'b0111; // 8->7
+default: #2 state <= 4'b0000; // 0
+endcase
+end
+
+endmodule
+
+
+
+EXAMPLE: TEST SEQUENCE COUNTER (test_seq_counter.v) 
+
+
+module test_seq_counter;
+reg clk,rst;
+wire [3:0]state;
+
+seq_counter iseq_counter(clk,rst,state);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+rst=1;
+#40 rst=0; 
+#400
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "clk=%b rst=%b state=%b", clk,rst,state);
+$dumpfile("test_seq_counter.vcd");
+$dumpvars(0,test_seq_counter);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLE: STRUCTURAL FLOP (SEQUENTIAL GATE) (d_flop_struct.v)
+
+
+
+module d_latch(d,clk,q);
+input d,clk;
+output q;
+
+reg q;
+
+always@(*)
+begin
+if (clk)
+#3 q <= d;
+end
+
+endmodule
+
+
+
+
+
+module inv(a,y);
+input a;
+output y;
+
+assign #1 y = ~a;
+
+endmodule
+
+
+
+
+module d_flop_struct(d,clk,q);
+input d,clk;
+output q;
+
+wire clk_bar,qm;
+
+d_latch imd_latch(d,clk_bar,qm);
+d_latch isd_latch(qm,clk,q);
+inv iinv(clk,clk_bar);
+
+
+endmodule
+
+
+
+
+
+
+
+
+module test_d_flop_struct;
+reg d,clk;
+wire q;
+
+d_flop_struct id_flop_struct(d,clk,q);
+
+
+initial begin
+clk=0;
+end
+
+
+always begin
+#10 clk=~clk;
+end
+
+
+initial begin
+d=0;
+#20 d=1; 
+#20 d=0;
+#20 d=1; 
+#20
+$dumpflush;
+$finish;
+end
+
+initial begin
+$monitor($time, "d=%b clk=%b q=%b", d,clk,q);
+$dumpfile("test_d_flop_struct.vcd");
+$dumpvars(0,test_d_flop_struct);
+end
+endmodule
+
+
+
+
+
+
+
+
+
+
